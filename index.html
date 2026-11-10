@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hệ thống quản lý kết quả học tập</title>
+<style>
+:root{--navy:#233f65;--blue:#477db8;--bg:#f3f6fa;--white:#fff;--text:#243247;--muted:#718096;--line:#e5ebf2;--green:#24845b;--orange:#c17b23;--red:#c65353}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:var(--navy);color:#fff;padding:22px 15px;position:fixed;inset:0 auto 0 0;z-index:5;display:flex;flex-direction:column}
+.brand{font-size:18px;font-weight:700;line-height:1.4;padding:8px 10px 25px}.brand small{display:block;font-size:11px;font-weight:400;color:#c7d6e8;margin-top:5px}
+.nav-label{font-size:10px;letter-spacing:1.2px;color:#aebfd4;padding:8px 12px}
+.nav button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;color:#dce7f3;padding:12px;border-radius:9px;text-align:left;margin:2px 0;font-size:14px}
+.nav button.active,.nav button:hover{background:#36577f;color:#fff}.nav .ico{width:20px;text-align:center;font-size:17px}
+.side-note{margin-top:auto;border-top:1px solid #496383;padding:15px 10px 3px;color:#c7d6e8;font-size:11px;line-height:1.6}
+.main{margin-left:245px;width:calc(100% - 245px);min-width:0}.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:3}
+.topbar strong{font-size:15px}.profile{font-size:12px;color:var(--muted)}.content{padding:26px 28px 40px;max-width:1450px;margin:auto}
+.page-title{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:22px}.page-title h1{font-size:23px;margin:0 0 7px}.sub{color:var(--muted);font-size:13px;line-height:1.5}
+.btn{border:0;border-radius:8px;background:var(--blue);color:white;padding:10px 14px;font-size:13px;font-weight:600}.btn.secondary{background:#eaf1f8;color:var(--navy)}.btn.danger{background:#fff0f0;color:var(--red)}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}.stat-label{font-size:12px;color:var(--muted)}.stat-value{font-size:27px;font-weight:700;margin:10px 0 5px;color:var(--navy)}.stat-foot{font-size:11px;color:var(--muted)}.two{grid-template-columns:1.35fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+.card h3{font-size:15px;margin:0 0 16px}.chart{height:220px;display:flex;align-items:end;gap:15px;padding:12px 8px 24px;border-bottom:1px solid var(--line);position:relative}
+.bar-group{flex:1;display:flex;align-items:center;justify-content:end;flex-direction:column;height:100%;gap:7px}.bar-pair{height:175px;display:flex;align-items:end;gap:5px;width:100%;justify-content:center}.bar{width:24px;border-radius:5px 5px 0 0;background:#78a5d4}.bar.alt{background:#c5d8eb}.bar-label{font-size:11px;color:var(--muted)}
+.legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:14px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.donut-wrap{display:flex;align-items:center;gap:20px;min-height:180px}.donut{width:145px;height:145px;border-radius:50%;background:conic-gradient(#477db8 0 58%,#70b89b 58% 82%,#e9b76b 82% 94%,#e7edf4 94% 100%);position:relative;flex-shrink:0}.donut:after{content:"649";position:absolute;inset:25px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:700;font-size:24px;color:var(--navy)}.legend-list{font-size:12px;line-height:2.2;color:var(--muted)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.toolbar input,.toolbar select,.form-control{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:#fff;color:var(--text);font-size:13px;min-width:0}.toolbar input{flex:1;min-width:170px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;background:#fff;min-width:650px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}th{background:#f8fafc;color:#64748b;font-weight:600}tr:last-child td{border-bottom:0}.pill{padding:5px 8px;border-radius:20px;font-size:10px;font-weight:600;background:#eaf1f8;color:#365f8e}.pill.good{background:#e8f5ee;color:var(--green)}.pill.warn{background:#fff4e5;color:var(--orange)}
+.action{border:0;background:transparent;color:var(--blue);font-size:12px;padding:3px}.empty{text-align:center;color:var(--muted);padding:28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px;font:13px Arial;background:#fff}.field textarea{min-height:90px;resize:vertical}.field.full{grid-column:1/-1}.form-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}
+.notice{padding:13px 15px;background:#eef5fc;border:1px solid #dce9f7;color:#365f8e;border-radius:9px;font-size:12px;line-height:1.6;margin-bottom:16px}
+.report-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:13px 0;font-size:13px}.report-row:last-child{border:0}
+.mobile-menu{display:none;border:0;background:transparent;font-size:22px;color:var(--navy)}
+.overlay{display:none}.toast{position:fixed;bottom:20px;right:20px;background:#203c60;color:white;padding:12px 16px;border-radius:9px;font-size:13px;z-index:20;box-shadow:0 5px 20px #0002}
+.modal-bg{position:fixed;inset:0;background:#10243b66;display:none;align-items:center;justify-content:center;padding:16px;z-index:15}.modal{background:white;border-radius:14px;padding:22px;width:min(520px,100%);max-height:90vh;overflow:auto}.modal h2{font-size:18px;margin:0 0 18px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.content{padding:22px 18px}}
+@media(max-width:640px){
+ .sidebar{transform:translateX(-100%);transition:.25s;width:265px}.sidebar.open{transform:translateX(0)}
+ .overlay.show{display:block;position:fixed;inset:0;background:#10243b66;z-index:4}
+ .main{margin:0;width:100%}.topbar{height:58px;padding:0 15px;gap:10px}.mobile-menu{display:block}.topbar strong{font-size:13px}.profile{font-size:10px}
+ .content{padding:20px 13px 30px}.page-title{align-items:center}.page-title h1{font-size:19px}.sub{font-size:11px}.page-title .btn{padding:9px 10px;font-size:11px}
+ .stats{gap:10px}.card{padding:14px}.stat-value{font-size:23px}.stat-label{font-size:11px}
+ .three{grid-template-columns:1fr}.chart{height:190px;gap:8px}.bar-pair{height:145px}.bar{width:17px}
+ .donut-wrap{gap:12px}.donut{width:118px;height:118px}.donut:after{inset:21px;font-size:20px}
+ .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+ .page-title .btn{white-space:nowrap}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand">QUẢN LÝ HỌC TẬP<small>Hệ thống thống kê kết quả học tập</small></div>
+ <div class="nav-label">DANH MỤC CHÍNH</div>
+ <nav class="nav" id="nav">
+  <button class="active" data-page="tongquan"><span class="ico">▦</span> Tổng quan</button>
+  <button data-page="hocsinh"><span class="ico">♙</span> Quản lý học sinh</button>
+  <button data-page="ketqua"><span class="ico">▤</span> Kết quả học tập</button>
+  <button data-page="phantich"><span class="ico">▥</span> Phân tích kết quả</button>
+  <button data-page="nhaplieu"><span class="ico">⇧</span> Nhập dữ liệu</button>
+  <button data-page="baocao"><span class="ico">▧</span> Báo cáo thống kê</button>
+  <button data-page="gioithieu"><span class="ico">ⓘ</span> Giới thiệu hệ thống</button>
+ </nav>
+ <div class="side-note">BẢN DEMO GIAO DIỆN<br>Thông tin và số liệu chỉ mang tính minh họa.</div>
+</aside>
+<main class="main">
+ <header class="topbar"><div style="display:flex;align-items:center;gap:10px"><button class="mobile-menu" onclick="toggleMenu()">☰</button><strong>Hệ thống quản lý kết quả học tập</strong></div><div class="profile">Quản trị viên　●</div></header>
+ <section class="content" id="content"></section>
+</main>
+</div>
+<div class="modal-bg" id="modalBg"><div class="modal"><h2 id="modalTitle">Thêm học sinh</h2><form id="studentForm">
+ <div class="form-grid">
+  <div class="field"><label>Mã bản ghi</label><input id="sid" required placeholder="VD: HS650"></div>
+  <div class="field"><label>Giới tính</label><select id="gender"><option>Nữ</option><option>Nam</option></select></div>
+  <div class="field"><label>Độ tuổi</label><input id="age" type="number" min="15" max="25" value="17" required></div>
+  <div class="field"><label>Trường học</label><select id="school"><option>GP</option><option>MS</option></select></div>
+  <div class="field"><label>Điểm kỳ 1</label><input id="g1" type="number" min="0" max="20" value="12"></div>
+  <div class="field"><label>Điểm kỳ 2</label><input id="g2" type="number" min="0" max="20" value="13"></div>
+  <div class="field"><label>Điểm cuối kỳ</label><input id="g3" type="number" min="0" max="20" value="14"></div>
+  <div class="field"><label>Môn học</label><select id="subject"><option>Toán</option><option>Tiếng Bồ Đào Nha</option></select></div>
+ </div><div class="form-actions"><button type="button" class="btn secondary" onclick="closeModal()">Hủy</button><button class="btn" type="submit">Lưu thông tin</button></div>
+ </form></div></div>
+<script>
+const initial=[
+{id:"HS001",gender:"Nữ",age:17,school:"GP",g1:10,g2:11,g3:12,subject:"Toán"},
+{id:"HS002",gender:"Nam",age:16,school:"GP",g1:14,g2:13,g3:15,subject:"Toán"},
+{id:"HS003",gender:"Nữ",age:18,school:"MS",g1:8,g2:10,g3:11,subject:"Tiếng Bồ Đào Nha"},
+{id:"HS004",gender:"Nam",age:17,school:"GP",g1:16,g2:17,g3:18,subject:"Toán"},
+{id:"HS005",gender:"Nữ",age:16,school:"MS",g1:12,g2:12,g3:13,subject:"Tiếng Bồ Đào Nha"},
+{id:"HS006",gender:"Nam",age:19,school:"MS",g1:6,g2:8,g3:9,subject:"Toán"},
+{id:"HS007",gender:"Nữ",age:17,school:"GP",g1:15,g2:14,g3:16,subject:"Tiếng Bồ Đào Nha"},
+{id:"HS008",gender:"Nam",age:18,school:"MS",g1:9,g2:9,g3:10,subject:"Toán"},
+{id:"HS009",gender:"Nữ",age:16,school:"GP",g1:13,g2:15,g3:15,subject:"Tiếng Bồ Đào Nha"},
+{id:"HS010",gender:"Nam",age:17,school:"GP",g1:11,g2:12,g3:12,subject:"Toán"},
+{id:"HS011",gender:"Nữ",age:18,school:"MS",g1:17,g2:16,g3:18,subject:"Tiếng Bồ Đào Nha"},
+{id:"HS012",gender:"Nam",age:16,school:"MS",g1:7,g2:9,g3:8,subject:"Toán"}
+];
+let students=initial.map(x=>({...x})), editing=null, current="tongquan";
+const $=s=>document.querySelector(s);
+function avg(k="g3"){return students.reduce((a,s)=>a+Number(s[k]),0)/(students.length||1)}
+function passCount(){return students.filter(s=>s.g3>=10).length}
+function pageTitle(t,d,btn=""){return `<div class="page-title"><div><h1>${t}</h1><div class="sub">${d}</div></div>${btn}</div>`}
+function stat(label,value,foot){return `<div class="card"><div class="stat-label">${label}</div><div class="stat-value">${value}</div><div class="stat-foot">${foot}</div></div>`}
+function tableRows(data){return data.map(s=>`<tr><td><b>${s.id}</b></td><td>${s.gender}</td><td>${s.age}</td><td>${s.school}</td><td>${s.subject}</td><td>${s.g1}</td><td>${s.g2}</td><td><b>${s.g3}</b></td><td><button class="action" onclick="editStudent('${s.id}')">Sửa</button><button class="action" onclick="deleteStudent('${s.id}')">Xóa</button></td></tr>`).join("")}
+function table(data){return `<div class="table-wrap"><table><thead><tr><th>Mã bản ghi</th><th>Giới tính</th><th>Tuổi</th><th>Trường</th><th>Môn học</th><th>Điểm kỳ 1</th><th>Điểm kỳ 2</th><th>Điểm cuối kỳ</th><th>Thao tác</th></tr></thead><tbody>${tableRows(data)||'<tr><td colspan="9" class="empty">Không tìm thấy dữ liệu</td></tr>'}</tbody></table></div>`}
+function chartBars(){let vals=[avg("g1"),avg("g2"),avg("g3")];return `<div class="chart">${vals.map((v,i)=>`<div class="bar-group"><div class="bar-pair"><div class="bar" style="height:${v/20*100}%"></div></div><div class="bar-label">${["Kỳ 1","Kỳ 2","Cuối kỳ"][i]}</div><b style="font-size:11px">${v.toFixed(1)}</b></div>`).join("")}</div>`}
+function render(){
+ let c=$("#content"), pass=passCount(), total=students.length;
+ if(current==="tongquan") c.innerHTML=pageTitle("Trang tổng quan","Tổng quan tình hình kết quả học tập của học sinh.")+
+ `<div class="grid stats">${stat("Tổng số bản ghi",total,"Dữ liệu đang hiển thị")}${stat("Điểm cuối kỳ trung bình",avg().toFixed(1)+"/20","Trên thang điểm 20")}${stat("Đạt từ 10 điểm",pass,"Bản ghi có điểm cuối kỳ ≥ 10")}${stat("Chưa đạt",total-pass,"Bản ghi có điểm cuối kỳ < 10")}</div>
+ <div class="grid two"><div class="card"><h3>Điểm trung bình theo kỳ</h3>${chartBars()}<div class="legend"><span><i class="dot" style="background:#78a5d4"></i>Điểm trung bình</span></div></div><div class="card"><h3>Phân loại kết quả cuối kỳ</h3><div class="donut-wrap"><div class="donut" style="background:conic-gradient(#70b89b 0 ${total?pass/total*100:0}%,#e9b76b ${total?pass/total*100:0}% 100%)"></div><div class="legend-list"><div><i class="dot" style="background:#70b89b"></i>Đạt: ${pass}</div><div><i class="dot" style="background:#e9b76b"></i>Chưa đạt: ${total-pass}</div></div></div></div></div>
+ <div class="card" style="margin-top:16px"><h3>Bản ghi mới nhất</h3>${table(students.slice(-5).reverse())}</div>`;
+ if(current==="hocsinh") c.innerHTML=pageTitle("Quản lý học sinh","Quản lý danh sách bản ghi học sinh trong bộ dữ liệu.",'<button class="btn" onclick="openModal()">＋ Thêm bản ghi</button>')+
+ `<div class="card"><div class="toolbar"><input id="search" placeholder="Tìm theo mã bản ghi..." oninput="filterStudents()"><select id="genderFilter" onchange="filterStudents()"><option value="">Tất cả giới tính</option><option>Nam</option><option>Nữ</option></select><select id="schoolFilter" onchange="filterStudents()"><option value="">Tất cả trường</option><option>GP</option><option>MS</option></select></div><div id="studentTable">${table(students)}</div></div>`;
+ if(current==="ketqua") c.innerHTML=pageTitle("Kết quả học tập","Theo dõi điểm số theo môn học và từng kỳ.")+
+ `<div class="card"><div class="toolbar"><input id="search" placeholder="Tìm theo mã bản ghi..." oninput="filterGrades()"><select id="subjectFilter" onchange="filterGrades()"><option value="">Tất cả môn học</option><option>Toán</option><option>Tiếng Bồ Đào Nha</option></select><select id="sortFilter" onchange="filterGrades()"><option value="">Thứ tự mặc định</option><option value="desc">Điểm cao đến thấp</option><option value="asc">Điểm thấp đến cao</option></select></div><div id="gradeTable">${table(students)}</div><p class="sub">Điểm G1, G2 và G3 được thể hiện theo thang điểm 0–20.</p></div>`;
+ if(current==="phantich") c.innerHTML=pageTitle("Phân tích kết quả","Một số góc nhìn mô tả từ dữ liệu điểm số.")+
+ `<div class="grid stats">${stat("Trung bình kỳ 1",avg("g1").toFixed(2),"Thang điểm 20")}${stat("Trung bình kỳ 2",avg("g2").toFixed(2),"Thang điểm 20")}${stat("Trung bình cuối kỳ",avg("g3").toFixed(2),"Thang điểm 20")}${stat("Số bản ghi",total,"Trong dữ liệu minh họa")}</div>
+ <div class="grid two"><div class="card"><h3>So sánh điểm trung bình</h3>${chartBars()}</div><div class="card"><h3>Điểm cuối kỳ theo môn</h3>${["Toán","Tiếng Bồ Đào Nha"].map(sub=>{let a=students.filter(s=>s.subject===sub),v=a.length?a.reduce((n,s)=>n+s.g3,0)/a.length:0;return `<div class="report-row"><span>${sub}</span><b>${v.toFixed(2)}/20</b></div>`}).join("")}<p class="sub">Chỉ tính trên các bản ghi hiện có trong bản demo.</p></div></div>
+ <div class="card" style="margin-top:16px"><h3>Diễn giải</h3><p class="sub">Các biểu đồ mô tả sự phân bố và thay đổi điểm số giữa các kỳ. Không dùng các kết quả này để khẳng định quan hệ nhân quả.</p></div>`;
+ if(current==="nhaplieu") c.innerHTML=pageTitle("Nhập dữ liệu","Đưa tệp CSV vào bản demo để xem trước và bổ sung bản ghi.")+
+ `<div class="notice"><b>Lưu ý:</b> Bản demo chỉ đọc CSV ở phía trình duyệt, không lưu lên máy chủ. Dữ liệu gốc UCI có thể có định dạng phân tách bằng dấu chấm phẩy.</div><div class="card"><h3>Chọn tệp dữ liệu CSV</h3><input type="file" id="csvFile" accept=".csv,text/csv" class="form-control"><p class="sub" style="margin:12px 0">Tệp nên có các cột: school, sex, age, G1, G2, G3. Có thể dùng tệp đã tải từ UCI.</p><button class="btn" onclick="previewCSV()">Đọc và nhập dữ liệu</button><div id="csvResult" style="margin-top:16px"></div></div>`;
+ if(current==="baocao") c.innerHTML=pageTitle("Báo cáo thống kê","Tổng hợp nhanh các chỉ số phục vụ báo cáo đồ án.",'<button class="btn" onclick="window.print()">In báo cáo</button>')+
+ `<div class="card"><h3>Báo cáo tổng hợp kết quả học tập</h3><div class="report-row"><span>Tổng số bản ghi</span><b>${total}</b></div><div class="report-row"><span>Điểm trung bình kỳ 1</span><b>${avg("g1").toFixed(2)}/20</b></div><div class="report-row"><span>Điểm trung bình kỳ 2</span><b>${avg("g2").toFixed(2)}/20</b></div><div class="report-row"><span>Điểm trung bình cuối kỳ</span><b>${avg("g3").toFixed(2)}/20</b></div><div class="report-row"><span>Số bản ghi đạt từ 10 điểm</span><b>${pass}</b></div><div class="report-row"><span>Số bản ghi dưới 10 điểm</span><b>${total-pass}</b></div><p class="sub" style="margin-top:18px">Số liệu được tính từ dữ liệu hiện có trong bản demo. Ngưỡng 10/20 là quy ước minh họa, không phải quy định chính thức của bộ dữ liệu.</p></div>`;
+ if(current==="gioithieu") c.innerHTML=pageTitle("Giới thiệu hệ thống","Thông tin về mục tiêu, phạm vi và nguồn dữ liệu.")+
+ `<div class="card"><h3>Mục tiêu xây dựng</h3><p class="sub">Hệ thống hỗ trợ quản lý, tra cứu và thống kê kết quả học tập. Giao diện được thiết kế để người dùng dễ theo dõi điểm số và xem các chỉ số tổng hợp.</p><h3 style="margin-top:24px">Nguồn dữ liệu dự kiến</h3><p class="sub">Student Performance – UCI Machine Learning Repository, tác giả Paulo Cortez và Alice Silva. Dữ liệu nghiên cứu kết quả học tập của học sinh tại hai trường trung học ở Bồ Đào Nha.</p><p><a href="https://archive.ics.uci.edu/dataset/320/student+performance" target="_blank">Mở bộ dữ liệu Student Performance trên UCI ↗</a></p><h3 style="margin-top:24px">Công nghệ dự kiến</h3><p class="sub">HTML, CSS, JavaScript, PHP, MySQL và Chart.js. Bản hiện tại là bản minh họa giao diện chạy độc lập bằng HTML/CSS/JavaScript.</p><h3 style="margin-top:24px">Phạm vi dữ liệu</h3><p class="sub">Các dòng dữ liệu trong bản demo là dữ liệu minh họa được tạo để thử nghiệm chức năng, không phải bản sao dữ liệu UCI gốc.</p></div>`;
+}
+function navigate(p){current=p;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render();toggleMenu(false);window.scrollTo(0,0)}
+$("#nav").addEventListener("click",e=>{let b=e.target.closest("button[data-page]");if(b)navigate(b.dataset.page)});
+function toggleMenu(force){let s=$("#sidebar"),o=$("#overlay");if(force===false){s.classList.remove("open");o.classList.remove("show");return}s.classList.toggle("open");o.classList.toggle("show")}
+function filterStudents(){let q=$("#search").value.toLowerCase(),g=$("#genderFilter").value,sc=$("#schoolFilter").value;let d=students.filter(s=>s.id.toLowerCase().includes(q)&&(!g||s.gender===g)&&(!sc||s.school===sc));$("#studentTable").innerHTML=table(d)}
+function filterGrades(){let q=$("#search").value.toLowerCase(),sub=$("#subjectFilter").value,sort=$("#sortFilter").value;let d=students.filter(s=>s.id.toLowerCase().includes(q)&&(!sub||s.subject===sub));if(sort)d.sort((a,b)=>sort==="desc"?b.g3-a.g3:a.g3-b.g3);$("#gradeTable").innerHTML=table(d)}
+function openModal(s){editing=s?.id||null;$("#modalTitle").textContent=editing?"Sửa thông tin bản ghi":"Thêm bản ghi học sinh";let v=s||{id:"",gender:"Nữ",age:17,school:"GP",g1:12,g2:13,g3:14,subject:"Toán"};Object.entries({sid:"id",gender:"gender",age:"age",school:"school",g1:"g1",g2:"g2",g3:"g3",subject:"subject"}).forEach(([el,k])=>$("#"+el).value=v[k]);$("#modalBg").style.display="flex"}
+function closeModal(){$("#modalBg").style.display="none"}
+function editStudent(id){let s=students.find(x=>x.id===id);if(s)openModal(s)}
+function deleteStudent(id){if(confirm("Bạn có chắc muốn xóa bản ghi "+id+" khỏi bản demo?")){students=students.filter(s=>s.id!==id);render();toast("Đã xóa bản ghi trong phiên demo")}}
+$("#studentForm").addEventListener("submit",e=>{e.preventDefault();let s={id:$("#sid").value.trim(),gender:$("#gender").value,age:+$("#age").value,school:$("#school").value,g1:+$("#g1").value,g2:+$("#g2").value,g3:+$("#g3").value,subject:$("#subject").value};if(editing){let i=students.findIndex(x=>x.id===editing);students[i]=s}else{if(students.some(x=>x.id===s.id)){alert("Mã bản ghi đã tồn tại");return}students.push(s)}closeModal();render();toast("Đã lưu trong phiên demo")});
+function toast(msg){let t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2300)}
+function previewCSV(){let f=$("#csvFile").files[0];if(!f){alert("Vui lòng chọn tệp CSV trước.");return}let r=new FileReader();r.onload=()=>{let lines=r.result.split(/\r?\n/).filter(Boolean),sep=lines[0].includes(";")?";":",",head=lines[0].split(sep).map(x=>x.replace(/"/g,"").trim()),idx=k=>head.findIndex(x=>x.toLowerCase()===k.toLowerCase());let required=["G1","G2","G3"];if(required.some(k=>idx(k)<0)){ $("#csvResult").innerHTML='<p class="sub">Không tìm thấy đủ cột G1, G2, G3. Hãy kiểm tra tệp CSV bạn chọn.</p>';return}let count=0;for(let i=1;i<lines.length;i++){let a=lines[i].split(sep).map(x=>x.replace(/^"|"$/g,"").trim());let g1=+a[idx("G1")],g2=+a[idx("G2")],g3=+a[idx("G3")];if(!Number.isFinite(g1)||!Number.isFinite(g2)||!Number.isFinite(g3))continue;students.push({id:"CSV"+String(Date.now()).slice(-5)+i,gender:(a[idx("sex")]||"").toLowerCase()==="f"?"Nữ":"Nam",age:+(a[idx("age")]||17),school:a[idx("school")]||"UCI",g1,g2,g3,subject:f.name.toLowerCase().includes("por")?"Tiếng Bồ Đào Nha":"Toán"});count++}$("#csvResult").innerHTML=`<div class="notice">Đã đọc ${count} dòng hợp lệ. Dữ liệu chỉ được thêm tạm thời trong phiên trình duyệt.</div><button class="btn" onclick="navigate('hocsinh')">Xem danh sách bản ghi</button>`};r.readAsText(f,"UTF-8")}
+render();
+</script>
+</body></html>

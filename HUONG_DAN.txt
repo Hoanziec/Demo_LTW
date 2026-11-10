@@ -1,0 +1,16 @@
+BẢN DEMO WEBSITE QUẢN LÝ KẾT QUẢ HỌC TẬP
+
+CÁCH XEM TRÊN ĐIỆN THOẠI
+1. Giải nén tệp ZIP.
+2. Mở tệp index.html bằng trình duyệt trên điện thoại.
+3. Nếu trình duyệt không mở trực tiếp tệp HTML, tải tệp index.html lên một dịch vụ lưu trữ web tĩnh hoặc gửi sang máy tính để mở.
+
+CÁCH XEM TRÊN MÁY TÍNH
+- Nhấp đúp index.html hoặc kéo vào Chrome/Edge.
+
+LƯU Ý
+- Đây là bản demo giao diện độc lập, không phải bản PHP/MySQL.
+- Dữ liệu ban đầu là dữ liệu minh họa, không phải dữ liệu UCI gốc.
+- Thêm/sửa/xóa và nhập CSV chỉ thay đổi dữ liệu tạm trong phiên trình duyệt.
+- Chức năng in báo cáo sử dụng hộp thoại in của trình duyệt.
+- Bộ dữ liệu UCI chính thức: https://archive.ics.uci.edu/dataset/320/student+performance
